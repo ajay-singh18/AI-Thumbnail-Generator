@@ -6,6 +6,7 @@ import { colorSchemes, type AspectRatio, type IThumbnail, type ThumbnailStyle } 
 import { button } from "motion/react-client";
 import AspectRatioSelector from "../components/AspectRatioSelector";
 import StyleSelector from "../components/StyleSelector";
+import ColorSelector from "../components/ColorSelector";
 
 
 const Generate = () => {
@@ -47,6 +48,7 @@ const Generate = () => {
                             {/* StyleSelector */}
                             <StyleSelector value={style} onChange={setStyle} isOpen={styleDropdownOpen} setIsOpen ={setStyleDropdownOpen} />
                             {/* ColorSchemeSelector */}
+                            <ColorSelector value={colorSchemeId} onChange={setColorSchemeId} />
 
                             {/* DETAILS */}
                             <div className="space-y-2">
