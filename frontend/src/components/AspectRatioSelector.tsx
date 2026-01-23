@@ -1,6 +1,6 @@
 import { RectangleHorizontal, RectangleVertical, Square } from 'lucide-react'
 import {aspectRatios,type AspectRatio} from '../assets/assets'
-import { button } from 'motion/react-client';
+
 
 const AspectRatioSelector = ({value,onChange}:{value:AspectRatio; onChange:(ratio:AspectRatio)=>void}) => {
     const iconMap = {
