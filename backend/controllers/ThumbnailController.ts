@@ -109,8 +109,19 @@ export const generateThumbnail = async (req:Request,res:Response)=>{
     
 
     // Generate image using FREE Pollinations API
+    let prompt = `Create a ${stylePrompts[style as keyof typeof stylePrompts]} for: "${title}"`;
+        if(color_scheme){
+            prompt+= `Use a ${colorSchemeDescriptions[color_scheme as keyof typeof colorSchemeDescriptions]} color scheme.`
+        }
+        if(user_prompt){
+            prompt += `Additional details: ${user_prompt}.`
+        }
+        prompt += `The thumbnail should be ${aspect_ratio}, visually stunning, and designed to maximiza click-through rate. Make it bold, professional, and impossible to ignore.`
+        // Generate the image using the ai model
 
-    const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(String(user_prompt))}`;
+
+
+    const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(String(prompt))}`;
 
 
      // Upload directly to Cloudinary from URL
