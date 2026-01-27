@@ -1,11 +1,15 @@
 import { useEffect, useState } from "react"
 import SoftBackdrop from "../components/SoftBackdrop"
-import { dummyThumbnails, type IThumbnail } from "../assets/assets"
+import {  type IThumbnail } from "../assets/assets"
 import { Link, useNavigate } from "react-router-dom"
 import { ArrowUpRightIcon, DownloadIcon, TrashIcon } from "lucide-react"
+import { userAuth } from "../context/AuthContext"
+import api from "../configs/api"
+import toast from "react-hot-toast"
 
 
 const MyGeneration = () => {
+  const {isLoggedIn} = userAuth()
 
   const navigate = useNavigate()
   const aspectRatioClassMap : Record<string,string> ={
@@ -18,18 +22,60 @@ const MyGeneration = () => {
   const [loading,setLoading] = useState(false)
 
   const fetchThumbnails = async()=>{
-    setThumbnails(dummyThumbnails as unknown as IThumbnail[])
-    setLoading(false)
+     try {
+       setLoading(true)
+       const {data} = await api.get('/api/user/thumbnails')
+       setThumbnails(data.thumbnails || [])
+     } catch (error:any) {
+      console.log(error)
+      toast.error(error?.response?.data?.message || error.message)
+     }
+     finally{
+      setLoading(false);
+     }
   }
-  const handleDownload = (image_url:string)=>{
-    window.open(image_url,'_blank')
+  const handleDownload = async (image_url:string)=>{
+    if (!image_url) return;
+
+  try {
+    const response = await fetch(image_url);
+    const blob = await response.blob();
+
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+
+    link.href = url;
+    link.download = "thumbnail.png";   // you can change name
+    document.body.appendChild(link);
+    link.click();
+
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+  } catch (err) {
+    console.error("Download failed:", err);
+    alert("Failed to download image");
   }
+  }
+
+
   const handleDelete = async(id:string)=>{
-    console.log(id)
+    try {
+      const confirm = window.confirm('Are you sure you want to delete this thumbnail?')
+      if(!confirm) return;
+      const {data} = await api.delete(`/api/thumbnail/delete/${id}`)
+      toast.success(data.message)
+      setThumbnails(thumbnails.filter((t)=>t._id !== id))
+    } catch (error:any) {
+      console.log(error)
+      toast.error(error?.response?.data?.message || error.message)
+    }
   }
   useEffect(()=>{
+    if(isLoggedIn){
+      fetchThumbnails()
+    }
     fetchThumbnails()
-  },[])
+  },[isLoggedIn])
   return (
     <>
       <SoftBackdrop/>
@@ -87,12 +133,12 @@ const MyGeneration = () => {
                       <p className="text-xs text-zinc-500">{new Date(thumb.createdAt!).toDateString()}</p>
                     </div>
                     <div className="absolute bottom-2 right-2 max-sm:flex sm:hidden group-hover:flex gap-1.5">
-                      <TrashIcon onClick={()=>handleDelete(thumb._id)} className="size-6 bg-white/50 p-1 rounded hover:bg-pink-600 transition-all"/>
+                      <TrashIcon  onClick={(e)=> {e.stopPropagation(); handleDelete(thumb._id)}} className="size-6 bg-white/50 p-1 rounded hover:bg-pink-600 transition-all"/>
 
-                      <DownloadIcon onClick={()=>handleDownload(thumb._id)}  className="size-6 bg-white/50 p-1 rounded hover:bg-pink-600 transition-all " />
+                      <DownloadIcon onClick={(e)=> {e.stopPropagation();handleDownload(thumb._id)}}  className="size-6 bg-white/50 p-1 rounded hover:bg-pink-600 transition-all " />
 
                         <Link target="_blank" to={`/preview?thumbnail_url=${thumb.image_url}&title=${thumb.title}`} >
-                      <ArrowUpRightIcon className="size-6 bg-white/50 p-1 rounded hover:bg-pink-600 transition-all"/>
+                      <ArrowUpRightIcon onClick={(e) => e.stopPropagation()}  className="size-6 bg-white/50 p-1 rounded hover:bg-pink-600 transition-all"/>
                       </Link>
 
                     </div>

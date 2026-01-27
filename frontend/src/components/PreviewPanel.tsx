@@ -11,10 +11,38 @@ const PreviewPanel = ({thumbnail,isLoading, aspectRatio}: {thumbnail:IThumbnail 
         '9:16' : 'aspect-[9/16]',
     } as Record<AspectRatio,string>
 
-    const onDownload = ()=>{
-        if(!thumbnail?.image_url) return;
-        window.open(thumbnail.image_url,'_blank')
-    }
+    // const onDownload = ()=>{
+    //     if(!thumbnail?.image_url) return;
+    //     const link = document.createElement('a');
+    //     link.href = thumbnail?.image_url.replace('/upload','/upload/f1_attachment')
+    //     document.body.appendChild(link)
+    //     link.click()
+    //     link.remove()
+    // }
+
+    const onDownload = async () => {
+  if (!thumbnail?.image_url) return;
+
+  try {
+    const response = await fetch(thumbnail.image_url);
+    const blob = await response.blob();
+
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+
+    link.href = url;
+    link.download = "thumbnail.png";   // you can change name
+    document.body.appendChild(link);
+    link.click();
+
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+  } catch (err) {
+    console.error("Download failed:", err);
+    alert("Failed to download image");
+  }
+};
+
 
   return (
     <div className='relative mx-auto w-full max-w-2xl'>
