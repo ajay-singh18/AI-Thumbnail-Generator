@@ -118,6 +118,8 @@ export const generateThumbnail = async (req:Request,res:Response)=>{
         }
         prompt += `The thumbnail should be ${aspect_ratio}, visually stunning, and designed to maximiza click-through rate. Make it bold, professional, and impossible to ignore.`
         // Generate the image using the ai model
+        console.log(prompt);
+        
 
 
 
