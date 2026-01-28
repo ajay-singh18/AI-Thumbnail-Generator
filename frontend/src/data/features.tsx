@@ -12,7 +12,7 @@ export const featuresData: IFeature[] = [
         description: "Generate vibrant, high-contrast thumbnails that stand out in the feed.",
     },
     {
-        icon: "/assets/shape-icons.svg",
+        icon: "/assets/shape-icon.svg",
         title: "Fully Editable",
         description: "Get fully layered designs you can tweak to perfection if needed",
     },

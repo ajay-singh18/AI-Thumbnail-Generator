@@ -20,7 +20,13 @@ export default function Navbar() {
                 transition={{ type: "spring", stiffness: 250, damping: 70, mass: 1 }}
             >
                 <Link to='/'>
-                    <img src="/logo.svg" alt="Logo" className="h-8.5 w-auto"/>
+                    {/* <img src="/logo1.png" alt="Logo" className="h-12 w-auto"/> */}
+
+  <p className="text-3xl font-semibold tracking-wide text-white">
+  Glimpsify
+</p>
+
+
                 </Link>
 
                 <div className="hidden md:flex items-center gap-8 transition duration-500">

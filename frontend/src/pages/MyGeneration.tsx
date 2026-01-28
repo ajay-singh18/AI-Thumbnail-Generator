@@ -131,6 +131,8 @@ const MyGeneration = () => {
                           <span className="px-2 py-0.5 rounded bg-white/8">{thumb.aspect_ratio}</span>
                       </div>
                       <p className="text-xs text-zinc-500">{new Date(thumb.createdAt!).toDateString()}</p>
+                      
+
                     </div>
                     <div className="absolute bottom-2 right-2 max-sm:flex sm:hidden group-hover:flex gap-1.5">
                       <TrashIcon  onClick={(e)=> {e.stopPropagation(); handleDelete(thumb._id)}} className="size-6 bg-white/50 p-1 rounded hover:bg-pink-600 transition-all"/>
