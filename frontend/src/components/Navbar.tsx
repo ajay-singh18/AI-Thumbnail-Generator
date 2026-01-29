@@ -22,18 +22,18 @@ export default function Navbar() {
                 <Link to='/'>
                     {/* <img src="/logo1.png" alt="Logo" className="h-12 w-auto"/> */}
 
-  <p className="text-3xl font-semibold tracking-wide text-white">
-  Glimpsify
+  <p className="text-4xl font-semibold tracking-wide text-white">
+   Glimpsify
 </p>
 
 
                 </Link>
 
                 <div className="hidden md:flex items-center gap-8 transition duration-500">
-                    <Link to = '/' className="hover:text-pink-300">Home</Link>
-                    <Link to = '/generate' className="hover:text-pink-300">Generate</Link>
-                    {isLoggedIn? <Link to = '/my-generations' className="hover:text-pink-300">My Generations</Link> : <Link to = '#' className="hover:text-pink-300">About</Link>}
-                    <Link to = '#' className="hover:text-pink-300">Contact Us</Link>
+                    <Link to = '/' className="hover:text-purple-300">Home</Link>
+                    <Link to = '/generate' className="hover:text-purple-300">Generate</Link>
+                    {isLoggedIn? <Link to = '/my-generations' className="hover:text-purple-300">My Generations</Link> : <Link to = '#' className="hover:text-purple-300">About</Link>}
+                    <Link to = '/contact' className="hover:text-purple-300">Contact Us</Link>
                     
                 </div>
                 <div className="flex items-center ">
@@ -49,7 +49,7 @@ export default function Navbar() {
                             </div>
                         </div>
                     ): (
-                        <button onClick={()=>navigate('/login')} className="hidden md:block px-6 py-2.5 bg-pink-600 hover:bg-pink-700 active:scale-95 transition-all rounded-full">
+                        <button onClick={()=>navigate('/login')} className="hidden md:block px-6 py-2.5 bg-purple-600 hover:bg-purple-700 active:scale-95 transition-all rounded-full">
                     Get Started
                 </button>
                     )}
@@ -72,7 +72,7 @@ export default function Navbar() {
                     Logout
                 </button>: <Link onClick={() => setIsOpen(false)} to = '/login' >Login</Link> }
 
-                <button onClick={() => setIsOpen(false)} className="active:ring-3 active:ring-white aspect-square size-10 p-1 items-center justify-center bg-pink-600 hover:bg-pink-700 transition text-white rounded-md flex">
+                <button onClick={() => setIsOpen(false)} className="active:ring-3 active:ring-white aspect-square size-10 p-1 items-center justify-center bg-purple-600 hover:bg-purple-700 transition text-white rounded-md flex">
                     <XIcon />
                 </button>
             </div>

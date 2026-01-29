@@ -5,23 +5,23 @@ import { ChevronDownIcon, CpuIcon, ImageIcon, PenToolIcon, SparkleIcon, SquareIc
 const StyleSelector = ({value,onChange,isOpen, setIsOpen}:{value: ThumbnailStyle; onChange:(style:ThumbnailStyle)=>void; isOpen:boolean; setIsOpen: (open:boolean)=>void}) => {
 
     const styleDescriptions: Record<ThumbnailStyle,string> = {
-        "Bold & Graphic" : "High contrast , bold typography, striking visuals",
         "Minimalist" : " Clean, simple , lots of white space",
+        "Bold & Graphic" : "High-contrast, bold typography and eye-catching visuals",
         "Photorealistic" : "Photo-based, natural looking",
         "Illustrated" : " Hand-drawnm, artistic, creative",
         "Tech/Futuristic" : "Modern, sleek, tech-inspired",
     }
     const styleIcons: Record<ThumbnailStyle,React.ReactNode> = {
-        "Bold & Graphic" : <SparkleIcon className ="h-4 w-4"/>,
         "Minimalist" :  <SquareIcon className ="h-4 w-4"/>,
+        "Bold & Graphic" : <SparkleIcon className ="h-4 w-4"/>,
         "Photorealistic" : <ImageIcon className ="h-4 w-4"/>,
         "Illustrated" : <PenToolIcon className ="h-4 w-4"/>,
         "Tech/Futuristic" : <CpuIcon className ="h-4 w-4"/>,
     }
   return (
-    <div className='relative space-y-3 dark'>
+    <div className='relative space-y-1 dark'>
         <label className='block text-sm font-medium text-zinc-200'>
-            Thumbnail Style
+            Design Style
         </label>
         <button type='button' onClick={()=>setIsOpen(!isOpen)}
         className='flex w-full items-center justify-between rounded-md border px-4 py-3 text-left transition bg-white/8 border-white/10 text-zind-200 hover:bg-white/12'

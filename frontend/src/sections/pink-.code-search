@@ -1,0 +1,181 @@
+# Query: pink-
+# Flags: CaseSensitive WordMatch RegExp
+# ContextLines: 1
+
+60 results - 13 files
+
+frontend/src/globals.css:
+  12  body::selection {
+  13:     @apply bg-purple-600 text-white;
+  14  }
+
+  20  .move-gradient {
+  21:     background-image: linear-gradient(to right, var(--color-purple-500), var(--color-purple-300));
+  22      background-size: 200% 100%;
+
+frontend/src/components/ColorSelector.tsx:
+  12                  onClick={()=>onChange(scheme.id)}
+  13:                 className= {`relative rounded-lg transition-all ${value === scheme.id && 'ring-2 ring-purple-500 '}`}
+  14                  title={scheme.name}
+
+frontend/src/components/Footer.tsx:
+  24                                  <li key={index}>
+  25:                                     <Link to={link.href} className="hover:text-purple-600 transition">
+  26                                          {link.name}
+
+  42                      <a href="#" target="_blank" rel="noreferrer">
+  43:                         <DribbbleIcon className="size-5 hover:text-purple-500" />
+  44                      </a>
+  45                      <a href="#" target="_blank" rel="noreferrer">
+  46:                         <LinkedinIcon className="size-5 hover:text-purple-500" />
+  47                      </a>
+  48                      <a href="#" target="_blank" rel="noreferrer">
+  49:                         <TwitterIcon className="size-5 hover:text-purple-500" />
+  50                      </a>
+  51                      <a href="#" target="_blank" rel="noreferrer">
+  52:                         <YoutubeIcon className="size-6 hover:text-purple-500" />
+  53                      </a>
+
+frontend/src/components/Login.tsx:
+  51                  {state !== "login" && (
+  52:                     <div className="flex items-center mt-6 w-full bg-white/5 ring-2 ring-white/10 focus-within:ring-purple-500/60 h-12 rounded-full overflow-hidden pl-6 gap-2 transition-all ">
+  53                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="text-white/60" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"> <circle cx="12" cy="8" r="5" /> <path d="M20 21a8 8 0 0 0-16 0" /> </svg>
+
+  57  
+  58:                 <div className="flex items-center w-full mt-4 bg-white/5 ring-2 ring-white/10 focus-within:ring-purple-500/60 h-12 rounded-full overflow-hidden pl-6 gap-2 transition-all ">
+  59                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="text-white/75" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"> <path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7" /> <rect x="2" y="4" width="20" height="16" rx="2" /> </svg>
+
+  62  
+  63:                 <div className=" flex items-center mt-4 w-full bg-white/5 ring-2 ring-white/10 focus-within:ring-purple-500/60 h-12 rounded-full overflow-hidden pl-6 gap-2 transition-all ">
+  64                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="text-white/75" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"> <rect width="18" height="11" x="3" y="11" rx="2" ry="2" /> <path d="M7 11V7a5 5 0 0 1 10 0v4" /> </svg>
+
+  68                  <div className="mt-4 text-left">
+  69:                     <button className="text-sm text-purple-400 hover:underline">
+  70                          Forget password?
+
+  73  
+  74:                 <button type="submit" className="mt-2 w-full h-11 rounded-full text-white bg-purple-600 hover:bg-purple-500 transition " >
+  75                      {state === "login" ? "Login" : "Sign up"}
+
+  79                      {state === "login" ? "Don't have an account?" : "Already have an account?"}
+  80:                     <span className="text-purple-400 hover:underline ml-1">click here</span>
+  81                  </p>
+
+frontend/src/components/Navbar.tsx:
+  32                  <div className="hidden md:flex items-center gap-8 transition duration-500">
+  33:                     <Link to = '/' className="hover:text-purple-300">Home</Link>
+  34:                     <Link to = '/generate' className="hover:text-purple-300">Generate</Link>
+  35:                     {isLoggedIn? <Link to = '/my-generations' className="hover:text-purple-300">My Generations</Link> : <Link to = '#' className="hover:text-purple-300">About</Link>}
+  36:                     <Link to = '#' className="hover:text-purple-300">Contact Us</Link>
+  37                      
+
+  51                      ): (
+  52:                         <button onClick={()=>navigate('/login')} className="hidden md:block px-6 py-2.5 bg-purple-600 hover:bg-purple-700 active:scale-95 transition-all rounded-full">
+  53                      Get Started
+
+  74  
+  75:                 <button onClick={() => setIsOpen(false)} className="active:ring-3 active:ring-white aspect-square size-10 p-1 items-center justify-center bg-purple-600 hover:bg-purple-700 transition text-white rounded-md flex">
+  76                      <XIcon />
+
+frontend/src/components/SoftBackdrop.tsx:
+  6  //             <div className='fixed inset-0 -z-1 pointer-events-none'>
+  7: //                 <div className='absolute left-1/2 top-20 -translate-x-1/2 w-245 h-115 bg-linear-to-tr from-purple-800/35 to-transparent rounded-full blur-3xl' />
+  8: //                 <div className='absolute right-12 bottom-10 w-105 h-55 bg-linear-to-bl from-purple-700/35 to-transparent rounded-full blur-2xl' />
+  9  //             </div>
+
+frontend/src/components/TestimonialCard.tsx:
+  5      return (
+  6:         <motion.div className="p-4 rounded-lg mx-4 w-72 shrink-0 bg-purple-950/30 border border-purple-950"
+  7              initial={{ y: 150, opacity: 0 }}
+
+frontend/src/components/TiltImage.tsx:
+  55                  <motion.img src="/hero_img.png"
+  56:                     className=" broderb bg-linear-180 from-purple-500 to-transparent p-1 w-full rounded-[15px] will-change-transform transform-[translateZ(0)]"
+  57                      alt="hero section showcase"
+
+frontend/src/pages/Generate.tsx:
+  100                                  <label >Title or Topic</label>
+  101:                                 <input type="text" value={title} onChange={(e)=>setTitle(e.target.value)} maxLength={100} placeholder="e.g., 10 Tips for Better Sleep" className="w-full px-4 py-3 rounded-lg border border-white/12 bg-black/20 text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:ring-purple-500" />
+  102                                  <div className="flex justify-end">
+
+  117                                  </label>
+  118:                                 <textarea value={additionalDetails} onChange={(e)=>setAdditionalDetails(e.target.value)} rows={3}   placeholder="Add any specific elements,mood, or style preferences..." className="w-full px-4 py-3 rounded-lg border border-white/10 bg-white/6 text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none"></textarea>
+  119                              </div>
+
+  122                      {!id && (
+  123:                         <button onClick={handleGenerate} className="text-[15px] w-full py-3.5 rounded-xl font-medium bg-linear-to-b from-purple-500 to-purple-600 hover:from-purple-700 disabled:cursor-not-allowed transition-colors">
+  124                              {loading? 'Generating...': 'Generate Thumbnail'}
+
+frontend/src/pages/MyGeneration.tsx:
+   92    {/* Glow */}
+   93:   <div className="absolute -top-10 -left-10 w-64 h-32 bg-gradient-to-r from-indigo-500/20 via-purple-500/20 to-purple-500/20 blur-3xl pointer-events-none" />
+   94  
+   95:   <h1 className="text-3xl  font-extrabold bg-gradient-to-r from-indigo-400 via-purple-400 to-purple-400 bg-clip-text text-transparent">
+   96      My Generations
+
+  127        {/* Gradient Glow */}
+  128:       <div className="absolute inset-0 blur-3xl opacity-40 bg-gradient-to-r from-indigo-500 via-purple-500 to-purple-500 rounded-full" />
+  129  
+
+  141          {/* Text */}
+  142:         <h3 className="text-2xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+  143            No thumbnails yet
+
+  152            <Sparkles className="w-4 h-4" />
+  153:           Click <span onClick={()=> navigate('/generate')} className="text-purple-400 font-medium">Generate</span> to get started
+  154          </div>
+
+  196                      <div className="absolute bottom-2 right-2 max-sm:flex sm:hidden group-hover:flex gap-1.5">
+  197:                       <TrashIcon  onClick={(e)=> {e.stopPropagation(); handleDelete(thumb._id)}} className="size-6 bg-white/50 p-1 rounded hover:bg-purple-600 transition-all"/>
+  198  
+  199:                       <DownloadIcon onClick={(e)=> {e.stopPropagation();handleDownload(thumb._id)}}  className="size-6 bg-white/50 p-1 rounded hover:bg-purple-600 transition-all " />
+  200  
+  201                          <Link target="_blank" to={`/preview?thumbnail_url=${thumb.image_url}&title=${thumb.title}`} >
+  202:                       <ArrowUpRightIcon onClick={(e) => e.stopPropagation()}  className="size-6 bg-white/50 p-1 rounded hover:bg-purple-600 transition-all"/>
+  203                        </Link>
+
+frontend/src/sections/ContactSection.tsx:
+  17                      <p className='mb-2 font-medium'>Your name</p>
+  18:                     <div className='flex items-center pl-3 rounded-lg border border-slate-700 focus-within:border-purple-500'>
+  19                          <UserIcon className='size-5' />
+
+  30                      <p className='mb-2 font-medium'>Email id</p>
+  31:                     <div className='flex items-center pl-3 rounded-lg border border-slate-700 focus-within:border-purple-500'>
+  32                          <MailIcon className='size-5' />
+
+  43                      <p className='mb-2 font-medium'>Message</p>
+  44:                     <textarea name='message' rows={8} placeholder='Enter your message' className='focus:border-purple-500 resize-none w-full p-3 outline-none rounded-lg border border-slate-700' />
+  45                  </motion.div>
+  46  
+  47:                 <motion.button type='submit' className='w-max flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-10 py-3 rounded-full'
+  48                      initial={{ y: 150, opacity: 0 }}
+
+frontend/src/sections/CTASection.tsx:
+   7      return (
+   8:         <motion.div className="max-w-5xl py-16 mt-40 md:pl-20 md:w-full max-md:mx-4 md:mx-auto flex flex-col md:flex-row max-md:gap-6 items-center justify-between text-left bg-linear-to-b from-purple-900 to-purple-950 rounded-2xl p-6 text-white"
+   9              initial={{ y: 150, opacity: 0 }}
+
+  14              <div>
+  15:                 <motion.h1 className="text-4xl md:text-[46px] md:leading-15 font-semibold bg-linear-to-r from-white to-purple-400 text-transparent bg-clip-text"
+  16                      initial={{ y: 80, opacity: 0 }}
+
+  22                  </motion.h1>
+  23:                 <motion.p className="bg-linear-to-r from-white to-purple-400 text-transparent bg-clip-text text-lg"
+  24                      initial={{ y: 80, opacity: 0 }}
+
+frontend/src/sections/PricingSection.tsx:
+  14                  {pricingData.map((plan: IPricing, index: number) => (
+  15:                     <motion.div key={index} className={`w-72 text-center border border-purple-950 p-6 pb-16 rounded-xl ${plan.mostPopular ? 'bg-purple-950 relative' : 'bg-purple-950/30'}`}
+  16                          initial={{ y: 150, opacity: 0 }}
+
+  21                          {plan.mostPopular && (
+  22:                             <p className="absolute px-3 text-sm -top-3.5 left-3.5 py-1 bg-purple-400 rounded-full">Most Popular</p>
+  23                          )}
+
+  28                                  <li key={index} className="flex items-center gap-2">
+  29:                                     <CheckIcon className="size-4.5 text-purple-600" />
+  30                                      <p>{feature}</p>
+
+  33                          </ul>
+  34:                         <button type="button" className={`w-full py-2.5 rounded-md font-medium mt-7 transition-all ${plan.mostPopular ? 'bg-white text-purple-600 hover:bg-slate-200' : 'bg-purple-500 hover:bg-purple-600'}`}>
+  35                              Get Started

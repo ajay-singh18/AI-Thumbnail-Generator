@@ -4,7 +4,7 @@ import {colorSchemes} from '../assets/assets'
 const ColorSelector = ({value,onChange}:{value:string; onChange:(color:string)=>void}) => {
   return (
     <div className='space-y-3'>
-        <label className='block text-sm font-medium text-zinc-200'>Color Scheme</label>
+        <label className='block text-sm font-medium text-zinc-200'>Color Theme</label>
         <div className='grid grid-cols-6 gap-3'>
             {colorSchemes.map((scheme)=>(
                 <button
