@@ -26,7 +26,7 @@ export type ColorScheme = (typeof colorSchemes)[number];
 
 export interface ThumbnailRequest {
     title: string;
-    colorSchemeId: string; //
+    colorSchemeId: string; 
     aspectRatio: AspectRatio;
     style: ThumbnailStyle;
     additionalDetails?: string;
