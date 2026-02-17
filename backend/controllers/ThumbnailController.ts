@@ -22,7 +22,7 @@ const colorSchemeDescriptions = {
     purple: 'purple-dominant color palette, magenta and violet tones, modern and stylish mood',
     monochrome: 'black and white color scheme, high contrast, dramatic lighting, timeless aesthetic',
     ocean: 'cool blue and teal tones, aquatic color palette, fresh and clean atmosphere',
-    pastel: 'soft pastel colors, low saturation, gentle tones, calm and friendly aesthetic', //
+    pastel: 'soft pastel colors, low saturation, gentle tones, calm and friendly aesthetic', 
 }
 
 export const generateThumbnail = async (req:Request,res:Response)=>{
