@@ -50,66 +50,7 @@ export const generateThumbnail = async (req:Request,res:Response)=>{
         })
         
 
-        // gemini part
-
-        // const model = 'gemini-3-pro-image-preview';
-        // // const model = 'gemini-1.5-flash';
-        // const generationConfig: GenerateContentConfig={
-        //     maxOutputTokens:32768,
-        //     temperature:1,
-        //     topP:0.95,
-        //     responseModalities: ['IMAGE'],
-        //     imageConfig: {
-        //         aspectRatio: aspect_ratio || '16:9',
-        //         imageSize:'1K'
-        //     },
-        // }
-        // let prompt = `Create a ${stylePrompts[style as keyof typeof stylePrompts]} for: "${title}"`;
-        // if(color_scheme){
-        //     prompt+= `Use a ${colorSchemeDescriptions[color_scheme as keyof typeof colorSchemeDescriptions]} color scheme.`
-        // }
-        // if(user_prompt){
-        //     prompt += `Additional details: ${user_prompt}.`
-        // }
-        // prompt += `The thumbnail should be ${aspect_ratio}, visually stunning, and designed to maximiza click-through rate. Make it bold, professional, and impossible to ignore.`
-        // // Generate the image using the ai model
-        // const response: any = await ai.models.generateContent({
-        //     model,
-        //     contents: [prompt],
-        //     config: generationConfig
-        // })
-
-        // // Check if the response is valid
-        // if(!response?.candidates?.[0]?.contents?.parts){
-        //     throw new Error('Unexpected response')
-        // }
-
-        // const parts = response.candidates[0].content.parts;
-        // let finalBuffer : Buffer | null = null;
-        // for(const part of parts){
-        //     if(part.inlineData){
-        //         finalBuffer = Buffer.from(part.inlineData.data,'base64')
-        //     }
-        // }
-        // const filename = `final-output-${Date.now()}.png`
-        // const filePath = path.join('images',filename);
-
-        // // create the image directory if it doesn't exist
-        // fs.mkdirSync('images',{recursive:true})
-
-        // // write the final image to the fiel
-        // fs.writeFileSync(filePath,finalBuffer!)
-
-        // const uploadResult = await cloudinary.uploader.upload(filePath,{resource_type:'image'})
-
-        // thumbnail.image_url = uploadResult.url;
-        // thumbnail.isGenerating = false;
-        // await thumbnail.save()
-        // res.json({messagge: 'Thumbnail Generated',thumbnail})
-        // fs.unlinkSync(filePath)
-    
-
-    let prompt = `Create a ${stylePrompts[style as keyof typeof stylePrompts]} for: "${title}"`;
+        let prompt = `Create a ${stylePrompts[style as keyof typeof stylePrompts]} for: "${title}"`;
         if(color_scheme){
             prompt+= `Use a ${colorSchemeDescriptions[color_scheme as keyof typeof colorSchemeDescriptions]} color scheme.`
         }
@@ -122,131 +63,130 @@ export const generateThumbnail = async (req:Request,res:Response)=>{
         let uploadResult: any = null;
 
         try {
-            console.log("Attempting to generate image using Hugging Face Inference API...");
+            console.log("Attempting to generate image using Gemini...");
             
-            const hfResponse = await fetch(
-                "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0",
-                {
-                    headers: {
-                        Authorization: `Bearer ${process.env.HUGGINGFACE_API_KEY}`,
-                        "Content-Type": "application/json",
-                    },
-                    method: "POST",
-                    body: JSON.stringify({ inputs: prompt }),
+            const generationConfig = {
+                responseModalities: ['IMAGE'],
+                maxOutputTokens: 32768,
+                temperature: 1,
+                topP: 0.95, //
+                imageConfig: {
+                    aspectRatio: aspect_ratio || '16:9',
+                    imageSize: '1K'
                 }
-            );
+            } as any;
 
-            if (!hfResponse.ok) {
-                throw new Error(`Hugging Face API error: ${hfResponse.statusText}`);
+            const response: any = await ai.models.generateContent({
+                model: 'gemini-2.0-flash-exp',
+                contents: [prompt],
+                config: generationConfig
+            });
+
+            // Check if the response is valid
+            if(!response?.candidates?.[0]?.content?.parts){
+                throw new Error('Unexpected response from Gemini');
             }
 
-            const arrayBuffer = await hfResponse.arrayBuffer();
-            const buffer = Buffer.from(arrayBuffer);
+            const parts = response.candidates[0].content.parts;
+            let finalBuffer : Buffer | null = null;
+            for(const part of parts){
+                if(part.inlineData){
+                    finalBuffer = Buffer.from(part.inlineData.data, 'base64');
+                }
+            }
 
-            const filename = `final-output-${Date.now()}.png`
+            if (!finalBuffer) {
+                throw new Error('No image data found in Gemini response');
+            }
+
+            const filename = `final-output-${Date.now()}.png`;
             const filePath = path.join('images', filename);
 
             fs.mkdirSync('images', { recursive: true });
-            fs.writeFileSync(filePath, buffer);
+            fs.writeFileSync(filePath, finalBuffer);
 
             uploadResult = await cloudinary.uploader.upload(filePath, { resource_type: 'image' });
             fs.unlinkSync(filePath);
             
-            console.log("Successfully generated and uploaded via Hugging Face.");
+            console.log("Successfully generated and uploaded via Gemini.");
 
-        } catch (hfError) {
-            console.log("Hugging Face API failed, falling back to Cloudflare Workers AI...");
-            console.log(hfError);
+        } catch (geminiError) {
+            console.log("Gemini failed, falling back to Hugging Face...");
+            console.log(geminiError);
             
             try {
-                const cloudflareResponse = await fetch(
-                    `https://api.cloudflare.com/client/v4/accounts/${process.env.CLOUDFLARE_ACCOUNT_ID}/ai/run/@cf/stabilityai/stable-diffusion-xl-base-1.0`,
+                console.log("Attempting to generate image using Hugging Face Inference API...");
+                
+                const hfResponse = await fetch(
+                    "https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-schnell",
                     {
-                        method: "POST",
                         headers: {
-                            "Authorization": `Bearer ${process.env.CLOUDFLARE_API_TOKEN}`,
-                            "Content-Type": "application/json"
+                            Authorization: `Bearer ${process.env.HUGGINGFACE_API_KEY}`,
+                            "Content-Type": "application/json",
                         },
-                        body: JSON.stringify({ prompt: prompt }),
+                        method: "POST",
+                        body: JSON.stringify({ inputs: prompt }),
                     }
                 );
 
-                if (!cloudflareResponse.ok) {
-                    throw new Error(`Cloudflare API error: ${cloudflareResponse.statusText}`);
+                if (!hfResponse.ok) {
+                    throw new Error(`Hugging Face API error: ${hfResponse.statusText}`);
                 }
 
-                const arrayBuffer = await cloudflareResponse.arrayBuffer();
+                const arrayBuffer = await hfResponse.arrayBuffer();
                 const buffer = Buffer.from(arrayBuffer);
 
                 const filename = `final-output-${Date.now()}.png`
                 const filePath = path.join('images', filename);
 
-                // create the image directory if it doesn't exist
                 fs.mkdirSync('images', { recursive: true });
-
-                // write the final image to the file
                 fs.writeFileSync(filePath, buffer);
 
                 uploadResult = await cloudinary.uploader.upload(filePath, { resource_type: 'image' });
-                fs.unlinkSync(filePath); // clean up
+                fs.unlinkSync(filePath);
                 
-                console.log("Successfully generated and uploaded via Cloudflare Workers AI.");
-            } catch (cloudflareError) {
-                console.log("Cloudflare AI failed, falling back to AI Horde...");
-                console.log(cloudflareError);
+                console.log("Successfully generated and uploaded via Hugging Face.");
+
+            } catch (hfError) {
+                console.log("Hugging Face API failed, falling back to Cloudflare Workers AI...");
+                console.log(hfError);
                 
                 try {
-                    const hordeRequest = await fetch('https://stablehorde.net/api/v2/generate/async', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'apikey': '0000000000'
-                        },
-                        body: JSON.stringify({
-                            prompt: prompt,
-                            params: {
-                                n: 1,
-                                width: 1024,
-                                height: 576,
-                                karras: true,
+                    const cloudflareResponse = await fetch(
+                        `https://api.cloudflare.com/client/v4/accounts/${process.env.CLOUDFLARE_ACCOUNT_ID}/ai/run/@cf/stabilityai/stable-diffusion-xl-base-1.0`,
+                        {
+                            method: "POST",
+                            headers: {
+                                "Authorization": `Bearer ${process.env.CLOUDFLARE_API_TOKEN}`,
+                                "Content-Type": "application/json"
                             },
-                            censor_nsfw: false
-                        })
-                    });
-
-                    if (!hordeRequest.ok) {
-                        throw new Error("Failed to start AI Horde generation");
-                    }
-
-                    const { id } = await hordeRequest.json();
-                    
-                    let hordeResult: any = null;
-                    for (let i = 0; i < 12; i++) {
-                        await new Promise(resolve => setTimeout(resolve, 5000));
-                        
-                        const statusReq = await fetch(`https://stablehorde.net/api/v2/generate/status/${id}`);
-                        const status = await statusReq.json();
-                        
-                        if (status.done && status.generations && status.generations.length > 0) {
-                            hordeResult = status.generations[0].img;
-                            break;
+                            body: JSON.stringify({ prompt: prompt }),
                         }
+                    );
+
+                    if (!cloudflareResponse.ok) {
+                        throw new Error(`Cloudflare API error: ${cloudflareResponse.statusText}`);
                     }
 
-                    if (!hordeResult) {
-                        throw new Error("AI Horde timed out after 60 seconds.");
-                    }
+                    const arrayBuffer = await cloudflareResponse.arrayBuffer();
+                    const buffer = Buffer.from(arrayBuffer);
 
-                    console.log("AI Horde generation complete. Uploading to Cloudinary...");
+                    const filename = `final-output-${Date.now()}.png`
+                    const filePath = path.join('images', filename);
+
+                    // create the image directory if it doesn't exist
+                    fs.mkdirSync('images', { recursive: true });
+
+                    // write the final image to the file
+                    fs.writeFileSync(filePath, buffer);
+
+                    uploadResult = await cloudinary.uploader.upload(filePath, { resource_type: 'image' });
+                    fs.unlinkSync(filePath); // clean up
                     
-                    uploadResult = await cloudinary.uploader.upload(hordeResult, {
-                        resource_type: "image",
-                    });
-                    
-                    console.log("Successfully generated and uploaded via AI Horde.");
-                } catch (hordeError) {
-                    console.log("AI Horde failed, all fallbacks exhausted.");
-                    console.log(hordeError);
+                    console.log("Successfully generated and uploaded via Cloudflare Workers AI.");
+                } catch (cloudflareError) {
+                    console.log("Cloudflare AI failed, all fallbacks exhausted.");
+                    console.log(cloudflareError);
                     throw new Error("All image generation APIs failed.");
                 }
             }
