@@ -5,6 +5,7 @@ import ai from "../configs/ai.js";
 import path from "node:path";
 import fs from 'fs'
 import { v2 as cloudinary } from "cloudinary";
+import { Buffer } from "node:buffer";
 
 const stylePrompts = {
     'Bold & Graphic': 'eye-catching thumbnail, bold typography, vibrant colors, expressive facial reaction, dramatic lighting, high contrast, click-worthy composition, professional style',
@@ -108,7 +109,6 @@ export const generateThumbnail = async (req:Request,res:Response)=>{
         // fs.unlinkSync(filePath)
     
 
-    // Generate image using FREE Pollinations API
     let prompt = `Create a ${stylePrompts[style as keyof typeof stylePrompts]} for: "${title}"`;
         if(color_scheme){
             prompt+= `Use a ${colorSchemeDescriptions[color_scheme as keyof typeof colorSchemeDescriptions]} color scheme.`
@@ -117,27 +117,146 @@ export const generateThumbnail = async (req:Request,res:Response)=>{
             prompt += `Additional details: ${user_prompt}.`
         }
         prompt += `The thumbnail should be ${aspect_ratio}, visually stunning, and designed to maximiza click-through rate. Make it bold, professional, and impossible to ignore.`
-        // Generate the image using the ai model
-        console.log(prompt);
         
+        console.log("Prompt:", prompt);
+        let uploadResult: any = null;
 
+        try {
+            console.log("Attempting to generate image using Hugging Face Inference API...");
+            
+            const hfResponse = await fetch(
+                "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0",
+                {
+                    headers: {
+                        Authorization: `Bearer ${process.env.HUGGINGFACE_API_KEY}`,
+                        "Content-Type": "application/json",
+                    },
+                    method: "POST",
+                    body: JSON.stringify({ inputs: prompt }),
+                }
+            );
 
+            if (!hfResponse.ok) {
+                throw new Error(`Hugging Face API error: ${hfResponse.statusText}`);
+            }
 
-    const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(String(prompt))}`;
-    // const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=1280&height=720&seed=${Date.now()}`;
+            const arrayBuffer = await hfResponse.arrayBuffer();
+            const buffer = Buffer.from(arrayBuffer);
 
+            const filename = `final-output-${Date.now()}.png`
+            const filePath = path.join('images', filename);
 
+            fs.mkdirSync('images', { recursive: true });
+            fs.writeFileSync(filePath, buffer);
 
-     // Upload directly to Cloudinary from URL
-    const uploadResult = await cloudinary.uploader.upload(imageUrl, {
-     resource_type: "image",
-    });
+            uploadResult = await cloudinary.uploader.upload(filePath, { resource_type: 'image' });
+            fs.unlinkSync(filePath);
+            
+            console.log("Successfully generated and uploaded via Hugging Face.");
 
-     thumbnail.image_url = uploadResult.secure_url;
-     thumbnail.isGenerating = false;
-     await thumbnail.save();
+        } catch (hfError) {
+            console.log("Hugging Face API failed, falling back to Cloudflare Workers AI...");
+            console.log(hfError);
+            
+            try {
+                const cloudflareResponse = await fetch(
+                    `https://api.cloudflare.com/client/v4/accounts/${process.env.CLOUDFLARE_ACCOUNT_ID}/ai/run/@cf/stabilityai/stable-diffusion-xl-base-1.0`,
+                    {
+                        method: "POST",
+                        headers: {
+                            "Authorization": `Bearer ${process.env.CLOUDFLARE_API_TOKEN}`,
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({ prompt: prompt }),
+                    }
+                );
 
-     return res.json({ message: "Thumbnail Generated", thumbnail });
+                if (!cloudflareResponse.ok) {
+                    throw new Error(`Cloudflare API error: ${cloudflareResponse.statusText}`);
+                }
+
+                const arrayBuffer = await cloudflareResponse.arrayBuffer();
+                const buffer = Buffer.from(arrayBuffer);
+
+                const filename = `final-output-${Date.now()}.png`
+                const filePath = path.join('images', filename);
+
+                // create the image directory if it doesn't exist
+                fs.mkdirSync('images', { recursive: true });
+
+                // write the final image to the file
+                fs.writeFileSync(filePath, buffer);
+
+                uploadResult = await cloudinary.uploader.upload(filePath, { resource_type: 'image' });
+                fs.unlinkSync(filePath); // clean up
+                
+                console.log("Successfully generated and uploaded via Cloudflare Workers AI.");
+            } catch (cloudflareError) {
+                console.log("Cloudflare AI failed, falling back to AI Horde...");
+                console.log(cloudflareError);
+                
+                try {
+                    const hordeRequest = await fetch('https://stablehorde.net/api/v2/generate/async', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'apikey': '0000000000'
+                        },
+                        body: JSON.stringify({
+                            prompt: prompt,
+                            params: {
+                                n: 1,
+                                width: 1024,
+                                height: 576,
+                                karras: true,
+                            },
+                            censor_nsfw: false
+                        })
+                    });
+
+                    if (!hordeRequest.ok) {
+                        throw new Error("Failed to start AI Horde generation");
+                    }
+
+                    const { id } = await hordeRequest.json();
+                    
+                    let hordeResult: any = null;
+                    for (let i = 0; i < 12; i++) {
+                        await new Promise(resolve => setTimeout(resolve, 5000));
+                        
+                        const statusReq = await fetch(`https://stablehorde.net/api/v2/generate/status/${id}`);
+                        const status = await statusReq.json();
+                        
+                        if (status.done && status.generations && status.generations.length > 0) {
+                            hordeResult = status.generations[0].img;
+                            break;
+                        }
+                    }
+
+                    if (!hordeResult) {
+                        throw new Error("AI Horde timed out after 60 seconds.");
+                    }
+
+                    console.log("AI Horde generation complete. Uploading to Cloudinary...");
+                    
+                    uploadResult = await cloudinary.uploader.upload(hordeResult, {
+                        resource_type: "image",
+                    });
+                    
+                    console.log("Successfully generated and uploaded via AI Horde.");
+                } catch (hordeError) {
+                    console.log("AI Horde failed, all fallbacks exhausted.");
+                    console.log(hordeError);
+                    throw new Error("All image generation APIs failed.");
+                }
+            }
+        }
+
+        thumbnail.image_url = uploadResult.secure_url;
+        thumbnail.isGenerating = false;
+        await thumbnail.save();
+
+        return res.json({ message: "Thumbnail Generated", thumbnail });
 
         
     } catch (error:any) {
