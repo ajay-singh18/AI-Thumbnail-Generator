@@ -22,7 +22,7 @@ export const getThumbnailbyId = async (req:Request,res:Response)=>{
     try {
         const {userId} = req.session
         const {id} = req.params;
-        const thumbnail = await Thumbnail.findOne({userId, _id: id}); //
+        const thumbnail = await Thumbnail.findOne({userId, _id: id}); 
         res.json({thumbnail})
 
     } catch (error:any) {
