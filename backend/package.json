@@ -5,8 +5,8 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "tsx index.ts",
-    "server": "nodemon --exec tsx index.ts",
+    "start": "tsx --no-cache index.ts",
+    "server": "nodemon --exec tsx --no-cache index.ts",
     "build": "tsc"
   },
   "keywords": [],
