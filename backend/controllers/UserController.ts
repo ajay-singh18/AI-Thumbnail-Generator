@@ -1,32 +1,32 @@
 
 
-// controllers to get al user aThumbnails
+// // controllers to get al user aThumbnails
 
-import { Request, Response } from "express";
-import Thumbnail from "../models/Thumbnail.js";
+// import { Request, Response } from "express";
+// import Thumbnail from "../models/Thumbnail.js";
 
-export const getUsersThumbnail = async (req:Request,res:Response)=>{
-    try {
-        const {userId} = req.session;
-         const thumbnails = await Thumbnail.find({userId}).sort({createdAt: -1})
-         res.json({thumbnails})
+// export const getUsersThumbnail = async (req:Request,res:Response)=>{
+//     try {
+//         const {userId} = req.session;
+//          const thumbnails = await Thumbnail.find({userId}).sort({createdAt: -1})
+//          res.json({thumbnails})
 
-    } catch (error:any) {
-        console.log(error);
-        res.status(500).json({message:error.message})
+//     } catch (error:any) {
+//         console.log(error);
+//         res.status(500).json({message:error.message})
         
-    }
-}
+//     }
+// }
 
-export const getThumbnailbyId = async (req:Request,res:Response)=>{
-    try {
-        const {userId} = req.session
-        const {id} = req.params;
-        const thumbnail = await Thumbnail.findOne({userId, _id: id}); 
-        res.json({thumbnail})
+// export const getThumbnailbyId = async (req:Request,res:Response)=>{
+//     try {
+//         const {userId} = req.session
+//         const {id} = req.params;
+//         const thumbnail = await Thumbnail.findOne({userId, _id: id}); 
+//         res.json({thumbnail})
 
-    } catch (error:any) {
-        console.log(error);
-        res.status(500).json({message:error.message}) 
-    }
-}
+//     } catch (error:any) {
+//         console.log(error);
+//         res.status(500).json({message:error.message}) 
+//     }
+// }
