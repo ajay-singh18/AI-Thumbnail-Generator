@@ -1,6 +1,4 @@
-
-
-// controllers to get al user aThumbnails
+// controller for the thumbnail
 
 import { Request, Response } from "express";
 import Thumbnail from "../models/Thumbnail.js";
