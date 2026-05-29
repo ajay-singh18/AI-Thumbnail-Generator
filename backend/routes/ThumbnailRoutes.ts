@@ -1,4 +1,4 @@
-// routes for thumbnails
+
 
 import express from 'express'
 import { deleteThumbnail, generateThumbnail } from '../controllers/ThumbnailController.js'
